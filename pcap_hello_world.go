@@ -7,9 +7,7 @@ import (
 
     "github.com/davecgh/go-spew/spew"
     "github.com/google/gopacket"
-    "github.com/google/gopacket/layers"
     "github.com/google/gopacket/pcap"
-    "github.com/google/gopacket/pcapgo"
 )
 
 func main() {
@@ -57,14 +55,21 @@ func main() {
     // }
 
     // Instead display the packets, we can write them to a file
-    f, _ := os.Create("dump.pcap")
-    defer f.Close()
+    // f, _ := os.Create("dump.pcap")
+    // defer f.Close()
 
-    packetWriter := pcapgo.NewWriter(f)
-    packetWriter.WriteFileHeader(65535, layers.LinkTypeEthernet)
+    // packetWriter := pcapgo.NewWriter(f)
+    // packetWriter.WriteFileHeader(65535, layers.LinkTypeEthernet)
 
-    for packet := range packetSource.Packets() {
-        packetWriter.WritePacket(packet.Metadata().CaptureInfo, packet.Data())
+    // for packet := range packetSource.Packets() {
+    //     packetWriter.WritePacket(packet.Metadata().CaptureInfo, packet.Data())
+    // }
+
+    // We can check the packet layers
+    // Read one packet
+    packet, _ := packetSource.NextPacket()
+    for _, layer := range packet.Layers() {
+        fmt.Println(layer.LayerType())
     }
 
 }
