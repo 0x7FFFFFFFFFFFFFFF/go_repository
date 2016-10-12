@@ -7,7 +7,9 @@ import (
 
     "github.com/davecgh/go-spew/spew"
     "github.com/google/gopacket"
+    "github.com/google/gopacket/layers"
     "github.com/google/gopacket/pcap"
+    "github.com/google/gopacket/pcapgo"
 )
 
 func main() {
@@ -50,8 +52,19 @@ func main() {
     // fmt.Println(packet)
 
     // Read multiple packets
+    // for packet := range packetSource.Packets() {
+    //     fmt.Println(packet)
+    // }
+
+    // Instead display the packets, we can write them to a file
+    f, _ := os.Create("dump.pcap")
+    defer f.Close()
+
+    packetWriter := pcapgo.NewWriter(f)
+    packetWriter.WriteFileHeader(65535, layers.LinkTypeEthernet)
+
     for packet := range packetSource.Packets() {
-        fmt.Println(packet)
+        packetWriter.WritePacket(packet.Metadata().CaptureInfo, packet.Data())
     }
 
 }
